@@ -134,7 +134,10 @@
         <div class="row"><button class="btn btn-teal" id="hl-play">Play</button><button class="btn btn-soft" id="hl-step">Jump 1 half-life</button><button class="btn btn-line" id="hl-reset">Reset</button></div>
         <div class="row" style="gap:24px"><div><div class="eyebrow">Time</div><div class="bigstat" id="hl-time">0</div></div><div><div class="eyebrow">Undecayed</div><div class="bigstat" id="hl-left">400</div></div></div>
         <p class="small muted" id="hl-use"></p></div></div>
-      <div class="card"><h2>Undecayed nuclei vs time</h2><div id="hl-chart"></div><p class="small muted">Teal = your simulation. Dashed = perfect halving. Random decay gets very close to the smooth curve when there are many nuclei.</p></div></div>`));
+      <div class="card"><h2>Undecayed nuclei vs time</h2><div id="hl-chart"></div><p class="small muted">Teal = your simulation. Dashed = perfect halving. Random decay gets very close to the smooth curve when there are many nuclei.</p></div>
+      <div class="card stack" id="coin-card"><div class="eyebrow">Model it yourself</div><h2 style="margin:0">Coin-toss model of half-life</h2><p class="prose" style="margin:0">Each coin is a nucleus. Shake and toss them all: every coin that lands <b>heads</b> has “decayed” and is removed. Each toss is one half-life. Record the results and see the pattern.</p>
+        <div class="coins" id="coins"></div><div class="row"><button class="btn btn-teal" id="coin-toss">Shake &amp; toss</button><button class="btn btn-line btn-sm" id="coin-reset">Start over</button></div>
+        <div class="lab-wrap" style="gap:14px"><div id="coin-table"></div><div id="coin-chart"></div></div><p class="small muted" id="coin-note" style="margin:0">Predict: how many tosses until fewer than 5 coins are left?</p></div></div>`));
     const N = 400, cv = AN.$("#hl-cv"), W = 520, H = 340, c = fitCanvas(cv, W, H);
     let alive, hist, time, iso, playing = false, timer, predicted = null;
     const reset = () => { alive = new Array(N).fill(true); hist = [{ x: 0, y: N }]; time = 0; iso = AN.ISOTOPES.find(i => i.id === AN.$("#hl-iso").value); AN.$("#hl-use").textContent = `${iso.label} ${iso.use}.`; render(); };
@@ -164,6 +167,20 @@
     AN.$("#hl-iso").onchange = () => { stop(); reset(); };
     AN.$("#hl-lock").onclick = () => { const g = parseInt(AN.$("#hl-guess").value, 10); if (isNaN(g)) return; predicted = g; AN.$("#hl-lock").disabled = true; AN.$("#hl-pfb").innerHTML = `<div class="fb info">Prediction locked: ${g}. Now press Play (or jump 3 half-lives) to test it.</div>`; };
     reset();
+    // coin-toss model
+    let coins, rows;
+    const coinReset = () => { coins = new Array(100).fill(true); rows = [[0, 100]]; coinDraw(); };
+    const coinDraw = () => {
+      AN.$("#coins").innerHTML = coins.map(c => `<span class="coin ${c ? "" : "gone"}"></span>`).join("");
+      AN.$("#coin-table").innerHTML = F.table(["Toss (half-lives)", "Coins left", "Removed"], rows.map((r, i) => [r[0], r[1], i ? rows[i - 1][1] - r[1] : "—"]));
+      AN.$("#coin-chart").innerHTML = rows.length > 1 ? F.line(rows.map(r => ({ x: r[0], y: r[1], label: String(r[1]) })), { xmin: 0, xmax: Math.max(6, rows.length - 1), ymax: 110, h: 220, xticks: rows.map(r => ({ x: r[0], label: r[0] })), y: "coins left", x: "tosses" }) : "";
+      const left = rows[rows.length - 1][1];
+      AN.$("#coin-note").textContent = left < 5 ? `It took ${rows.length - 1} tosses to get below 5 coins. Halving 100 gives 50, 25, 12.5, 6.25, 3.1, so about 5 tosses is expected.` : "Predict: how many tosses until fewer than 5 coins are left?";
+      AN.$("#coin-toss").disabled = left === 0;
+    };
+    AN.$("#coin-toss").onclick = () => { coins = coins.map(c => c && Math.random() >= 0.5); rows.push([rows.length, coins.filter(Boolean).length]); coinDraw(); };
+    AN.$("#coin-reset").onclick = coinReset;
+    coinReset();
     return stop;
   };
 
@@ -408,7 +425,48 @@
     return () => cancelAnimationFrame(raf);
   };
 
+  /* ============ Element or Compound? ============ */
+  L.elcomp = (v) => {
+    AN.labVisit("elcomp");
+    const SAMPLES = [
+      { id: "cu", name: "copper wire", look: "shiny reddish-brown solid", col: "#C46A2B", kind: 0, heat: "It glows red. When cool, the surface is black, but the inside is still copper. The black coating came from reacting with oxygen in the air. Nothing broke apart.", elec: "Conducts electricity very well. No new substances appear." },
+      { id: "su", name: "table sugar", look: "white crystals", col: "#F4F1EA", kind: 1, heat: "It melts, turns brown, then black. Droplets of water form on the cool part of the tube. A black solid (carbon) is left behind.", elec: "Sugar (solid or dissolved) does not conduct electricity. Nothing happens." },
+      { id: "s", name: "sulfur", look: "yellow powder", col: "#E8D23B", kind: 0, heat: "It melts into an orange-red liquid. On cooling, yellow sulfur solid returns. No gas and no new substance.", elec: "Does not conduct. Nothing happens." },
+      { id: "w", name: "pure water", look: "clear liquid", col: "#9AD3F5", kind: 1, heat: "It boils and the steam condenses back into water. That's just a change of state.", elec: "With a little electrolyte added, bubbles form at both electrodes, twice as much gas at one as the other. One gas pops with a burning splint (hydrogen) and the other relights a glowing splint (oxygen)." },
+      { id: "hgo", name: "mercury(II) oxide", look: "orange-red powder", col: "#D9531E", kind: 1, heat: "Silvery droplets of liquid metal form on the tube, and the gas given off relights a glowing splint (oxygen).", elec: "The solid does not conduct. Nothing happens." },
+      { id: "mg", name: "magnesium ribbon", look: "shiny grey metal strip", col: "#B9C1CC", kind: 0, heat: "It burns with a dazzling white light and forms white powder. Careful: that's combining with oxygen from the air, not breaking down.", elec: "Conducts electricity well. No new substances appear." },
+      { id: "bs", name: "baking soda", look: "white powder", col: "#FFFFFF", kind: 1, heat: "A gas is given off that turns limewater milky (carbon dioxide). Water droplets appear and a different white solid is left.", elec: "The solid does not conduct. Nothing happens." }
+    ];
+    let cur = SAMPLES[0];
+    v.appendChild(h(`<div class="wrap">${head("Element or Compound?", "Use heating and electricity as diagnostic tests. If a substance breaks down into simpler substances, it's a compound. If nothing can break it down, it's an element.")}
+      <div class="card"><div class="eyebrow">Step 1 · Pick a sample</div><div class="samples" id="ec-samples">${SAMPLES.map(x => `<button class="sample" data-id="${x.id}" aria-pressed="false"><span class="sw" style="background:${x.col};border:1px solid var(--line)"></span><b>${x.name}</b><span class="small muted">${x.look}</span></button>`).join("")}</div></div>
+      <div class="lab-wrap"><div class="card stack"><div class="eyebrow">Step 2 · Test it</div><h2 id="ec-name" style="margin:0"></h2>
+        <div class="row"><button class="btn btn-main" id="ec-heat">${icon("flame")}Heat strongly in a test tube</button><button class="btn btn-teal" id="ec-elec">${icon("bulb")}Pass electricity through it</button></div>
+        <div id="ec-obs" class="fb info">Choose a test and observe carefully.</div>
+        <p class="small muted" style="margin:0">Watch out: some changes are reactions <i>with air</i>, not the sample breaking apart.</p></div>
+      <div class="card stack"><div class="eyebrow">Step 3 · Your conclusion</div><div id="ec-ans"></div><button class="btn btn-main" id="ec-check">Check my conclusions</button><div id="ec-res"></div></div></div>
+      <div class="card"><h2>Write it like a scientist</h2><p class="prose" style="margin:0">A diagnostic test is reported as: <i>If</i> [I do this test], <i>and</i> [I observe this evidence], <i>then</i> [this is my conclusion]. Example: <i>If mercury(II) oxide is heated strongly, and silvery droplets form and the gas relights a glowing splint, then mercury(II) oxide is a compound of mercury and oxygen.</i></p></div></div>`));
+    const tested = {};
+    const pick = (x) => { cur = x; AN.$$(".sample", v).forEach(b => b.setAttribute("aria-pressed", String(b.dataset.id === x.id))); AN.$("#ec-name").textContent = x.name; AN.$("#ec-obs").innerHTML = "Choose a test and observe carefully."; };
+    AN.$$(".sample", v).forEach(b => b.onclick = () => pick(SAMPLES.find(x => x.id === b.dataset.id)));
+    const obs = (k) => { tested[cur.id] = true; AN.$("#ec-obs").innerHTML = `<b>${k === "heat" ? "Heating" : "Electricity"}:</b> ${cur[k]}`; drawAns(); };
+    AN.$("#ec-heat").onclick = () => obs("heat"); AN.$("#ec-elec").onclick = () => obs("elec");
+    const choice = {};
+    const drawAns = () => {
+      AN.$("#ec-ans").innerHTML = F.table(["Sample", "Tested?", "Conclusion"], SAMPLES.map(x => [x.name, tested[x.id] ? "✓" : "—", `<select data-id="${x.id}" aria-label="Conclusion for ${x.name}" ${tested[x.id] ? "" : "disabled"}><option value="">?</option><option value="0" ${choice[x.id] === "0" ? "selected" : ""}>element</option><option value="1" ${choice[x.id] === "1" ? "selected" : ""}>compound</option></select>`]));
+      AN.$$("#ec-ans select").forEach(s => s.onchange = () => { choice[s.dataset.id] = s.value; });
+    };
+    AN.$("#ec-check").onclick = () => {
+      if (SAMPLES.some(x => !choice[x.id])) { AN.$("#ec-res").innerHTML = `<div class="fb info">Test every sample and choose a conclusion for each one first.</div>`; return; }
+      const right = SAMPLES.filter(x => +choice[x.id] === x.kind).length;
+      AN.$("#ec-res").innerHTML = `<div class="fb ${right === SAMPLES.length ? "ok" : "no"}"><b>${right} / ${SAMPLES.length} correct.</b><br>${SAMPLES.map(x => `${x.name}: <b>${x.kind ? "compound" : "element"}</b> ${+choice[x.id] === x.kind ? "✓" : "✗"}`).join("<br>")}<br><span class="small">Copper and magnesium changed when heated, but only by reacting with air. They never broke down into anything simpler.</span></div>`;
+      if (right === SAMPLES.length && !AN.S.q["lab-elcomp"]) { AN.S.q["lab-elcomp"] = { solved: true, tries: 1 }; AN.save(); AN.addXP(25, "investigation"); }
+    };
+    pick(SAMPLES[0]); drawAns();
+  };
+
   L.list = [
+    { href: "#lab-elcomp", name: "Element or Compound?", desc: "Heat it, electrify it, then decide", sec: "1.1", svg: `<svg viewBox="0 0 40 40"><path d="M14 4h12M16 4v12l-8 16a3 3 0 0 0 3 4h18a3 3 0 0 0 3-4l-8-16V4" style="fill:none;stroke:var(--muted)" stroke-width="2"/><path d="M11 26h18l3 6a2 2 0 0 1-2 3H10a2 2 0 0 1-2-3z" style="fill:var(--teal)"/><circle cx="17" cy="20" r="2" style="fill:var(--brand)"/><circle cx="23" cy="16" r="1.6" style="fill:var(--brand)"/></svg>` },
     { href: "#table", name: "Periodic Table", desc: "Families, heat maps and a find-it quiz", sec: "1.1 · 1.5", svg: `<svg viewBox="0 0 40 40"><g style="fill:var(--teal)"><rect x="3" y="6" width="7" height="7" rx="2"/><rect x="30" y="6" width="7" height="7" rx="2"/><rect x="3" y="15" width="7" height="7" rx="2"/></g><g style="fill:var(--grape)"><rect x="12" y="24" width="7" height="7" rx="2"/><rect x="21" y="24" width="7" height="7" rx="2"/></g><g style="fill:var(--brand)"><rect x="30" y="15" width="7" height="7" rx="2"/><rect x="30" y="24" width="7" height="7" rx="2"/></g></svg>` },
     { href: "#lab-box", name: "Mystery Box", desc: "Build a model of something you can't see", sec: "1.2", svg: `<svg viewBox="0 0 40 40"><rect x="5" y="9" width="30" height="24" rx="3" style="fill:var(--grape)"/><text x="20" y="27" text-anchor="middle" font-size="16" font-weight="700" style="fill:#fff">?</text></svg>` },
     { href: "#lab-foil", name: "Gold Foil", desc: "Recreate Rutherford's famous experiment", sec: "1.2", svg: `<svg viewBox="0 0 40 40"><rect x="22" y="4" width="5" height="32" style="fill:var(--sun)"/><path d="M2 12h20M2 20h18l-12 -9M2 28h20" style="stroke:var(--beyond);fill:none" stroke-width="2.5"/><circle cx="24.5" cy="20" r="2.5" style="fill:var(--brand)"/></svg>` },

@@ -35,6 +35,7 @@
         </section>
         <section class="card s8"><div class="eyebrow">Chapter 1 map</div><h2>The Nature of Matter</h2><div class="path">
           ${CH.sections.map(s => { const p = AN.secProgress(s); const cls = p.done === p.total ? "done" : (nx && nx.s === s ? "now" : ""); return `<a class="step ${cls}" href="#learn-${s.id}"><div class="num">${s.num}</div><div><h3>${s.title}</h3><div class="meta">${s.cards.length} cards · ${s.practice.length} practice questions · ${s.labs.map(l => l.label).join(", ")}</div></div><div class="bar"><i style="width:${p.pct}%"></i></div></a>`; }).join("")}
+          <a class="step" href="#summary"><div class="num">Σ</div><div><h3>Chapter summary, key terms &amp; flashcards</h3><div class="meta">${CH.glossary.length} key terms · big ideas · key relationships</div></div><div class="bar"><i style="width:0"></i></div></a>
           <a class="step boss" href="#boss"><div class="num">★</div><div><h3>Chapter Boss Challenge</h3><div class="meta">15 mixed questions · best score ${S().boss.best}% · unlocks “Atom Architect”</div></div><div class="bar"><i style="width:${S().boss.best}%"></i></div></a>
         </div></section>
         <section class="card s4"><div class="eyebrow">How to read the icons</div><h2>Levels &amp; labels</h2><div class="legend">
@@ -67,6 +68,7 @@
   /* ================= Lessons list ================= */
   R.lessons = wrapRoute((v) => {
     v.appendChild(h(`<div class="wrap"><header class="top"><div><h1>Lessons</h1><p class="sub">Chapter 1 · The Nature of Matter. Five sections, each a short set of interactive cards.</p></div>${stats()}</header>
+      <div class="row"><a class="btn btn-teal" href="#summary">${icon("book")}Chapter summary &amp; key terms</a><a class="btn btn-soft" href="#lab-elcomp">${icon("flask")}Element or Compound? investigation</a></div>
       <div class="stack">${CH.sections.map(s => { const p = AN.secProgress(s), pr = AN.secPractice(s); return `<div class="card"><div class="row" style="justify-content:space-between"><div style="min-width:0;flex:1 1 300px"><div class="eyebrow">Section ${s.num}</div><h2 style="margin-bottom:4px">${s.title}</h2><p class="muted" style="margin:0">${s.blurb}</p></div>
         <div class="row"><a class="btn btn-main" href="#learn-${s.id}">${p.done ? (p.done === p.total ? "Review" : "Continue") : "Start"}</a><a class="btn btn-soft" href="#practice-${s.id}">Practice</a></div></div>
         <div class="row small muted" style="margin-top:12px;gap:18px"><span>Cards ${p.done}/${p.total}</span><div class="bar" style="flex:1;min-width:120px"><i style="width:${p.pct}%"></i></div><span>Practice solved ${pr.solved}/${pr.total}</span></div></div>`; }).join("")}</div></div>`));
@@ -91,7 +93,7 @@
       const card = h(`<article class="card lesson-card"><div class="row" style="justify-content:space-between"><div class="eyebrow">Card ${idx + 1} of ${s.cards.length}</div>
         <div class="row"><div class="seg" role="group" aria-label="Explanation level"><button data-l="simple">Explain it simpler</button><button data-l="std">Standard</button><button data-l="deep">Go deeper</button></div>
         <button class="btn btn-soft btn-sm speak" aria-pressed="false" title="Read aloud">${icon("sound")}Listen</button></div></div>
-        <h2 class="ctitle">${c.title}</h2><div class="pre-slot"></div><div class="content" ${c.predict ? "hidden" : ""}><div class="prose expl"></div><div class="figs"></div>${c.link ? `<p><a class="btn btn-line btn-sm" href="${c.link.href}">${icon("flask")}${c.link.label}</a></p>` : ""}<div class="chk-slot"></div></div>
+        <h2 class="ctitle">${c.title}</h2><div class="pre-slot"></div><div class="content" ${c.predict ? "hidden" : ""}><div class="prose expl"></div><div class="figs"></div><div class="wk-slot"></div>${c.link ? `<p><a class="btn btn-line btn-sm" href="${c.link.href}">${icon("flask")}${c.link.label}</a></p>` : ""}<div class="chk-slot"></div></div>
         <div class="lesson-nav"><button class="btn btn-soft prev" ${idx === 0 ? "disabled" : ""}>← Back</button><button class="btn btn-main next">Next →</button></div></article>`);
       slot.appendChild(card);
       const content = card.querySelector(".content"), next = card.querySelector(".next");
@@ -107,6 +109,7 @@
         if (pre) { content.hidden = false; card.querySelector(".pre-slot").innerHTML = `<p class="small muted">${icon("bulb")} You made a prediction for this card already.</p>`; }
         else card.querySelector(".pre-slot").appendChild(AN.Q(c.predict, { mode: "predict", onDone: () => { content.hidden = false; content.scrollIntoView({ behavior: "smooth", block: "start" }); } }));
       }
+      if (c.worked) card.querySelector(".wk-slot").appendChild(AN.Worked(c.worked, c.id + "-wk"));
       if (c.check) card.querySelector(".chk-slot").appendChild(AN.Q(c.check, { mode: "check", onDone: () => { next.disabled = false; next.title = ""; } }));
       card.querySelector(".prev").onclick = () => { idx--; show(); };
       next.onclick = () => { AN.markCard(s, c); idx++; show(); };
@@ -244,7 +247,7 @@
     bindTheme(v);
   });
   R.table = wrapRoute(AN.LABS.table); R["lab-flame"] = wrapRoute(AN.LABS.flame); R["lab-halflife"] = wrapRoute(AN.LABS.halflife); R["lab-box"] = wrapRoute(AN.LABS.box);
-  R["lab-foil"] = wrapRoute(AN.LABS.foil); R["lab-atom"] = wrapRoute(AN.LABS.atom); R["lab-trend"] = wrapRoute(AN.LABS.trend); R["lab-alkali"] = wrapRoute(AN.LABS.alkali);
+  R["lab-foil"] = wrapRoute(AN.LABS.foil); R["lab-atom"] = wrapRoute(AN.LABS.atom); R["lab-trend"] = wrapRoute(AN.LABS.trend); R["lab-alkali"] = wrapRoute(AN.LABS.alkali); R["lab-elcomp"] = wrapRoute(AN.LABS.elcomp);
 
   /* ================= Badges ================= */
   R.badges = wrapRoute((v) => {
@@ -325,6 +328,45 @@
     };
     let armed = false;
     AN.$("#st-reset", v).onclick = (e) => { if (!armed) { armed = true; e.target.textContent = "Tap again to erase everything"; return; } AN.reset(); location.hash = "#home"; location.reload(); };
+  });
+
+  /* ================= Summary, key terms, flashcards ================= */
+  R.summary = wrapRoute((v) => {
+    const G = CH.glossary, SM = CH.summary; let tab = "sum";
+    v.appendChild(h(`<div class="wrap"><header class="top"><div><a href="#lessons" class="small">← All lessons</a><h1>Chapter 1 Summary &amp; Key Terms</h1><p class="sub">Review the big ideas, look up a term, or quiz yourself with flashcards.</p></div>${stats()}</header>
+      <div class="seg" role="group" aria-label="View"><button data-t="sum">Summary</button><button data-t="terms">Key terms (${G.length})</button><button data-t="flash">Flashcards</button></div><div id="sm-body"></div></div>`));
+    bindTheme(v);
+    const body = AN.$("#sm-body", v);
+    const draw = () => {
+      AN.$$(".seg button", v).forEach(b => b.setAttribute("aria-pressed", String(b.dataset.t === tab)));
+      body.innerHTML = "";
+      if (tab === "sum") {
+        body.appendChild(h(`<div class="stack">${SM.sections.map(s => { const sec = CH.sections.find(x => x.num === s.num); return `<div class="card"><div class="row" style="justify-content:space-between"><h2 style="margin:0">${s.num} ${sec.title}</h2><a class="btn btn-soft btn-sm" href="#learn-${sec.id}">Open lesson</a></div><ul class="prose" style="margin:10px 0 0">${s.points.map(p => `<li>${p}</li>`).join("")}</ul></div>`; }).join("")}
+          <div class="card"><h2>Key relationships</h2>${AN.FIG.table(["Relationship", "Use it for"], SM.formulas.map(([f, u]) => [`<span class="formula">${f}</span>`, u]))}</div>
+          <div class="card"><h2>Periodic trends at a glance</h2>${AN.FIG.trendArrows()}</div></div>`));
+      } else if (tab === "terms") {
+        const box = h(`<div class="stack"><div class="row"><input id="g-q" placeholder="Search a term…" aria-label="Search key terms" style="flex:1;min-width:0;padding:10px 12px;border-radius:12px;border:2px solid var(--line);background:var(--bg)"><select id="g-s" aria-label="Section"><option value="">All sections</option>${CH.sections.map(s => `<option>${s.num}</option>`).join("")}</select></div><div class="gloss" id="g-list"></div></div>`);
+        body.appendChild(box);
+        const list = () => { const q = AN.$("#g-q", box).value.toLowerCase(), sec = AN.$("#g-s", box).value; AN.$("#g-list", box).innerHTML = G.filter(([t, d, s]) => (!sec || s === sec) && (t + d).toLowerCase().includes(q)).map(([t, d, s]) => `<div class="term"><b>${t}</b><span>${d}</span><div class="small mono muted">${s}</div></div>`).join("") || `<p class="muted">No terms match.</p>`; };
+        AN.$("#g-q", box).oninput = list; AN.$("#g-s", box).onchange = list; list();
+      } else {
+        let deck = shuffle(G), i = 0, flipped = false, known = 0;
+        const fc = h(`<div class="stack"><p class="small muted" style="text-align:center;margin:0">Say the meaning out loud, then tap the card to check.</p><div class="flash" id="fc" tabindex="0" role="button" aria-label="Flip card"></div><div class="row" style="justify-content:center"><button class="btn btn-soft" id="fc-again">Still learning</button><button class="btn btn-teal" id="fc-know">I knew it</button></div><p class="small muted" style="text-align:center" id="fc-count"></p></div>`);
+        body.appendChild(fc);
+        const show = () => {
+          if (i >= deck.length) { AN.$("#fc", fc).innerHTML = `<div class="ft">${known} / ${G.length}</div><div class="fd">terms known. Tap to shuffle and go again.</div>`; flipped = null; return; }
+          const [t, d, s] = deck[i]; AN.$("#fc", fc).innerHTML = flipped ? `<div class="small mono muted">${s}</div><div class="fd">${d}</div><div class="small muted">${t}</div>` : `<div class="small mono muted">${s}</div><div class="ft">${t}</div><div class="small muted">tap to flip</div>`;
+          AN.$("#fc-count", fc).textContent = `Card ${i + 1} of ${deck.length} · known ${known}`;
+        };
+        const flip = () => { if (flipped === null) { deck = shuffle(G); i = 0; known = 0; flipped = false; return show(); } flipped = !flipped; show(); };
+        AN.$("#fc", fc).onclick = flip; AN.$("#fc", fc).onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); flip(); } };
+        AN.$("#fc-know", fc).onclick = () => { if (i < deck.length) { known++; i++; flipped = false; show(); if (i === deck.length && known >= G.length * 0.8) AN.addXP(15, "flashcards"); } };
+        AN.$("#fc-again", fc).onclick = () => { if (i < deck.length) { deck.push(deck[i]); i++; flipped = false; show(); } };
+        show();
+      }
+    };
+    AN.$$(".seg button", v).forEach(b => b.onclick = () => { tab = b.dataset.t; draw(); });
+    draw();
   });
 
   /* ================= chrome ================= */

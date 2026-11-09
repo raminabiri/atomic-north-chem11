@@ -1,6 +1,6 @@
 {
   "name": "atomic-north",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Atomic North: an interactive Grade 11 chemistry companion (Chapter 1: The Nature of Matter).",
   "main": "electron/main.js",
   "author": "Ramin Abiri",

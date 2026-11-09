@@ -63,28 +63,32 @@ The first time you open it, you enter your first name and pick how you like thin
 
 ## What's in Chapter 1
 
-### Lessons: 5 sections, 27 interactive cards
+### Lessons: 5 sections, 28 interactive cards
 | Section | Topics |
 |---|---|
-| **1.1 Sorting Matter** | pure substances and mixtures, elements and compounds, diagnostic tests, metals/nonmetals/metalloids, history of the periodic table, groups, periods and families |
+| **1.1 Sorting Matter** | pure substances and mixtures, elements and compounds, diagnostic tests, metals/nonmetals/metalloids, SATP and STP, history of the periodic table and the periodic law, groups, periods and families, element symbols and IUPAC names |
 | **1.2 Picturing the Atom** | empirical and theoretical knowledge, models, the laws of conservation of mass and constant composition, Dalton, Thomson, Rutherford, subatomic particles |
 | **1.3 Isotopes & Radioactivity** | atomic number and mass number, isotopes, weighted atomic mass, alpha/beta/gamma radiation, half-life, uses and risks of radioisotopes |
 | **1.4 Light, Spectra & the Bohr Atom** | continuous and line spectra, flame tests, Bohr energy levels, energy-level diagrams, valence electrons, the electron cloud |
 | **1.5 Patterns Across the Periodic Table** | atomic radius, ions, ionization energy, electron affinity, electronegativity, reactivity trends |
 
-Each section ends with an **"Explain it to a friend"** task, a good way to check that you really understand.
+**7 step-by-step worked examples** (each step opens only after you try it), and each section ends with an **"Explain it to a friend"** task.
 
-### Practice: 75 questions
-Fifteen per section, at three levels, in five formats: multiple choice, numeric (with units), sort-into-groups, put-in-order and written answers (with a model answer and a self-check list).
+### Chapter summary, 73 key terms and flashcards
+A one-page review of every section, the key relationships (like neutrons = A − Z and the half-life formula), a searchable glossary, and a flashcard mode.
 
-### 8 virtual labs
+### Practice: 78 questions
+15–18 per section, at three levels, in five formats: multiple choice, numeric (with units), sort-into-groups, put-in-order and written answers (with a model answer and a self-check list).
+
+### 9 virtual labs
 | Lab | What you do |
 |---|---|
+| **Element or Compound?** | Heat and electrify seven samples, then classify them (watch out for reactions with air!) |
 | **Interactive Periodic Table** | Explore families, see heat maps of radius, ionization energy and electronegativity, and play a find-it quiz |
 | **Mystery Box** | Fire marbles at a hidden shape and work out what it is, the same way scientists modelled the atom |
 | **Gold Foil Experiment** | Compare Thomson's model with Rutherford's nuclear model |
 | **Atom Builder** | Add protons, neutrons and electrons to build atoms, isotopes and ions, with challenges |
-| **Half-Life Simulator** | Watch 400 nuclei decay and compare with the perfect halving curve |
+| **Half-Life Simulator** | Watch 400 nuclei decay, then model half-life yourself with 100 tossed coins |
 | **Flame Test Lab** | Test seven metal compounds, then identify four unknowns |
 | **Trend Grapher** | Predict the pattern, then graph trends for elements 1–36 |
 | **Alkali Metals in Water** | Predict the reactivity order, then watch Li → Cs react |

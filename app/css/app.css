@@ -266,3 +266,28 @@ input[type=range]{width:100%;accent-color:var(--teal)}
   .msg{max-width:92%}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---------- worked examples ---------- */
+.worked{border:1.5px solid var(--lvl2);border-radius:14px;padding:16px;background:linear-gradient(0deg,var(--surface),var(--lvl2-bg));display:flex;flex-direction:column;gap:10px;margin:14px 0}
+.wk-title{font-family:var(--f-display);font-weight:800;font-size:18px}
+.wk-steps{margin:0;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:10px}
+.wk-step{display:flex;flex-direction:column;gap:7px;padding:10px 12px;border-radius:11px;background:var(--surface);border:1px solid var(--line)}
+.wk-step .ansrow input.wk-text{width:min(320px,100%);font-family:var(--f-body);font-size:15px}
+.wk-done{font-weight:600;color:var(--good);display:flex;gap:6px;align-items:center}
+/* ---------- glossary / summary ---------- */
+.gloss{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.gloss .term{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:11px 13px;min-width:0}
+.gloss .term b{display:block;font-size:15px}
+.gloss .term span{font-size:13.5px;color:var(--muted)}
+.flash{max-width:560px;margin:0 auto;min-height:220px;border-radius:22px;padding:28px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:12px;background:var(--surface);border:2px solid var(--teal);cursor:pointer}
+.flash .ft{font-family:var(--f-display);font-size:clamp(22px,3vw,30px);font-weight:800}
+.flash .fd{font-size:16px;max-width:44ch}
+.formula{font-family:var(--f-mono);font-weight:700;background:var(--surface-2);border-radius:8px;padding:3px 8px}
+/* ---------- lab bench ---------- */
+.samples{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.sample{border:1.5px solid var(--line);border-radius:12px;padding:10px;background:var(--bg);text-align:left;display:flex;flex-direction:column;gap:4px}
+.sample[aria-pressed="true"]{border-color:var(--teal);background:var(--surface-2)}
+.sample .sw{width:28px;height:28px;border-radius:8px}
+.coins{display:grid;grid-template-columns:repeat(20,1fr);gap:3px;max-width:520px}
+.coin{aspect-ratio:1;border-radius:50%;background:#F2B200;border:1px solid #C99300}
+.coin.gone{background:var(--surface-2);border-color:var(--line)}

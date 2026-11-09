@@ -155,6 +155,6 @@
     window.scrollTo(0, 0);
     AN.refreshChrome && AN.refreshChrome();
   };
-  AN.navOf = { learn: "lessons", boss: "practice", myth: "practice", "lab-flame": "labs", "lab-halflife": "labs", "lab-box": "labs", "lab-foil": "labs", "lab-atom": "labs", "lab-trend": "labs", "lab-alkali": "labs", table: "labs" };
+  AN.navOf = { learn: "lessons", boss: "practice", myth: "practice", "lab-flame": "labs", "lab-halflife": "labs", "lab-box": "labs", "lab-foil": "labs", "lab-atom": "labs", "lab-trend": "labs", "lab-alkali": "labs", "lab-elcomp": "labs", table: "labs", summary: "lessons" };
   window.addEventListener("hashchange", AN.route);
 })();

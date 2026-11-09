@@ -169,4 +169,42 @@
     }
     return root;
   };
+
+  /* ---------- worked example: each step opens only after the student tries it ---------- */
+  AN.Worked = function (w, id) {
+    const root = h(`<div class="worked"><div class="qhead"><span class="pill p2">${icon("bulb")}Worked example · try each step first</span></div>
+      <div class="wk-title">${w.title}</div><div class="qtext">${w.problem}</div><ol class="wk-steps"></ol></div>`);
+    const list = root.querySelector(".wk-steps");
+    let i = 0;
+    const next = () => {
+      if (i >= w.steps.length) {
+        list.appendChild(h(`<li class="wk-done">${icon("star")} You worked through every step. That's exactly how to set out a test answer.</li>`));
+        if (!AN.S.q[id]) { AN.S.q[id] = { tries: 1, solved: true, last: Date.now() }; AN.save(); AN.addXP(10, "worked example"); }
+        return;
+      }
+      const st = w.steps[i], k = i; let tries = 0;
+      const li = h(`<li class="wk-step"><div class="wk-ask"><b>Step ${k + 1}.</b> ${st.ask}</div>
+        <div class="ansrow">${st.answer != null ? `<input inputmode="decimal" autocomplete="off" placeholder="?" aria-label="Step ${k + 1} answer">${st.unit ? `<span class="unit">${st.unit}</span>` : ""}` : `<input class="wk-text" autocomplete="off" placeholder="Your idea…" aria-label="Step ${k + 1} answer">`}
+        <button type="button" class="btn btn-teal btn-sm">${st.answer != null ? "Check" : "Show this step"}</button></div><div class="wk-fb"></div></li>`);
+      list.appendChild(li);
+      const inp = li.querySelector("input"), btn = li.querySelector("button"), fbx = li.querySelector(".wk-fb");
+      const reveal = (ok) => { btn.disabled = true; inp.disabled = true; fbx.innerHTML = `<div class="fb ${ok === false ? "info" : "ok"}">${ok === true ? "<b>Yes!</b> " : ""}${st.show}</div>`; i++; next(); };
+      inp.addEventListener("keydown", e => { if (e.key === "Enter") btn.click(); });
+      btn.onclick = () => {
+        const val = inp.value.trim();
+        if (st.answer == null) {
+          if (val.length < 2) { fbx.innerHTML = `<div class="fb info">Write your idea first, even a guess. Then the step opens.</div>`; return; }
+          return reveal(null);
+        }
+        const v = +val.replace(/[\s,]/g, "");
+        if (val === "" || isNaN(v)) { fbx.innerHTML = `<div class="fb info">Type a number first.</div>`; return; }
+        tries++;
+        if (Math.abs(v - st.answer) <= (st.tol || 0) + 1e-9) return reveal(true);
+        if (tries >= 2) return reveal(false);
+        fbx.innerHTML = `<div class="fb no">Not quite: ${v > st.answer ? "too high" : "too low"}. Check your working and try once more.</div>`;
+      };
+    };
+    next();
+    return root;
+  };
 })();

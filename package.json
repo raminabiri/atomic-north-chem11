@@ -1,0 +1,28 @@
+{
+  "name": "atomic-north",
+  "version": "0.1.0",
+  "description": "Atomic North: an interactive Grade 11 chemistry companion (Chapter 1: The Nature of Matter).",
+  "main": "electron/main.js",
+  "author": "Ramin Abiri",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dist:win": "electron-builder --win --publish never"
+  },
+  "devDependencies": {
+    "electron": "33.2.1",
+    "electron-builder": "25.1.8"
+  },
+  "build": {
+    "appId": "ca.atomicnorth.chem11",
+    "productName": "Atomic North",
+    "files": ["electron/**/*", "app/**/*", "build/icon.png"],
+    "directories": { "output": "dist", "buildResources": "build" },
+    "win": {
+      "target": [{ "target": "nsis", "arch": ["x64"] }, { "target": "portable", "arch": ["x64"] }],
+      "icon": "build/icon.ico"
+    },
+    "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true, "artifactName": "AtomicNorth-Setup-${version}.exe" },
+    "portable": { "artifactName": "AtomicNorth-Portable-${version}.exe" }
+  }
+}
